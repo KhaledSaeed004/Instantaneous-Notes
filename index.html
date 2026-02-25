@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZWVlZWVlIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRpdGxlPmhlYWRzcGFjZTwvdGl0bGU+PHBhdGggZD0iTTMwLjk2IDE1LjgyN2MwLjAxNCAwLjIyOCAwLjAyMiAwLjQ5NCAwLjAyMiAwLjc2MSAwIDMuMzY4LTEuMjQ3IDYuNDQ2LTMuMzAzIDguNzk2bDAuMDEzLTAuMDE1Yy0yLjY2NiAzLjMzMi02LjczMiA1LjQ0OC0xMS4yOTIgNS40NDgtMC4xMTIgMC0wLjIyMy0wLjAwMS0wLjMzNS0wLjAwNGwwLjAxNyAwYy0wLjIzNyAwLjAxNS0wLjUxNCAwLjAyMy0wLjc5MyAwLjAyMy00LjA0NiAwLTcuNjgzLTEuNzQ4LTEwLjE5Ny00LjUzMWwtMC4wMTEtMC4wMTJjLTIuNTMxLTIuNDEzLTQuMTA1LTUuODEtNC4xMDUtOS41NzUgMC0wLjMxNCAwLjAxMS0wLjYyNCAwLjAzMi0wLjkzMmwtMC4wMDIgMC4wNDFjMC4wNzYtMy4zOCAxLjI5LTYuNDYyIDMuMjczLTguODkzbC0wLjAyMSAwLjAyNmMyLjc3My0zLjUyNSA3LjAzNS01Ljc3IDExLjgyMy01Ljc3N2gwLjAwMWMwLjAzOS0wIDAuMDg1LTAuMDAxIDAuMTMxLTAuMDAxIDQuMDkyIDAgNy43NzcgMS43NCAxMC4zNTcgNC41MmwwLjAwOCAwLjAwOWMyLjYyOSAyLjU4MyA0LjI4NyA2LjE0NyA0LjM4IDEwLjA5OGwwIDAuMDE3eiIvPjwvc3ZnPg==">
+        <title>Notes App</title>
+        <style>
+            @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                outline-offset: 2px;
+            }
+            *:focus-visible {
+                outline: 2px solid #eee;
+            }
+
+            /* =========================================
+               THEME VARIABLES
+               ========================================= */
+
+            :root {
+                /* Base Layers */
+                --bg-base: #141518; /* darker than before (pushed body only) */
+                --bg-surface: #232428;
+                --bg-surface-2: #202225;
+                --bg-surface-3: #1e1f22;
+
+                /* Text */
+                --text-primary: #f5f6f7;
+                --text-muted: #b9bbbe;
+
+                /* Borders / Dividers */
+                --border-subtle: #3a3c42;
+
+                /* Accent */
+                --accent: #5865f2;
+
+                /* Hover */
+                --hover-bright: #ffffff;
+                --hover-dark-text: #111111;
+            }
+
+            /* =========================================
+               STYLES
+               ========================================= */
+
+            body {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                background-color: var(--bg-base);
+                font-family: "Roboto", sans-serif;
+                font-optical-sizing: auto;
+                font-style: normal;
+                color: var(--text-primary);
+            }
+            button,
+            input,
+            select,
+            textarea {
+                font-family: inherit;
+            }
+            ol,
+            ul {
+                list-style: none;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.75rem 1rem 0.75rem;
+            }
+            button {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                background-color: var(--bg-surface);
+                color: var(--text-primary);
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+            button:hover {
+                background-color: var(--hover-bright);
+                color: var(--hover-dark-text);
+            }
+            dialog {
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                border: none;
+                padding: 0;
+                border-radius: 5px;
+                background-color: var(--bg-surface-2);
+                color: var(--text-primary);
+                width: min(90vw, 420px);
+                box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75);
+            }
+            dialog::backdrop {
+                background: rgba(0, 0, 0, 0.7);
+                backdrop-filter: blur(6px);
+            }
+            .dialog-content {
+                padding: 2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .dialog-content p {
+                color: var(--text-muted);
+            }
+            .dialog-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 0.75rem;
+            }
+            .hidden {
+                display: none !important;
+            }
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                white-space: nowrap;
+                border: 0;
+            }
+            .options {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .divider {
+                height: 1px;
+                background: var(--border-subtle);
+                margin: 6px 4px;
+                border-radius: 1px;
+            }
+            .title-wrapper {
+                display: flex;
+                align-items: center;
+                width: fit-content;
+            }
+            .title-wrapper .title {
+                padding-inline: 0.5rem;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: fit-content;
+                max-width: 36rem;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+            }
+            .title-wrapper .title:focus {
+                outline: none;
+                cursor: auto;
+                text-overflow: unset;
+                background-color: var(--bg-surface);
+            }
+            .title-wrapper svg {
+                opacity: 0;
+                pointer-events: none;
+                transition:
+                    opacity 0.2s ease,
+                    visibility 0.2s;
+            }
+            .title-wrapper:hover svg {
+                visibility: visible;
+                opacity: 1;
+            }
+            .title-wrapper:focus-within svg {
+                display: none;
+            }
+            .main-content {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                padding-inline: 1rem;
+                margin-block-end: 0.5rem;
+            }
+            .main-content .dropzone {
+                position: absolute;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                inset: 0;
+                left: 1rem;
+                right: 1rem;
+                border: 2px dashed var(--border-subtle);
+                border-radius: 5px;
+                color: #55575e;
+                font-size: 2rem;
+                font-weight: bold;
+                pointer-events: none;
+            }
+            .main-content textarea {
+                background-color: var(--bg-surface-3);
+                border: none;
+                resize: none;
+                border-radius: 5px;
+                width: 100%;
+                font-size: 1.25rem;
+                color: var(--text-primary);
+                padding: 0.5rem;
+                height: 100%;
+                text-align: start;
+            }
+            .main-content textarea:focus {
+                outline: none;
+            }
+            .stats {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 4rem;
+                padding: 0 1rem 0.5rem;
+                color: var(--text-muted);
+            }
+            .stats .col {
+                display: flex;
+                flex-shrink: 0;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            .stats .col > span {
+                padding-inline: 0.5rem;
+                border-left: 1px solid var(--border-subtle);
+            }
+            .stats .col span:first-child {
+                padding-inline: 0px;
+                border-left: none;
+            }
+            .stats .col .typing-dir {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            /* =========================================
+               RESPONSIVE STYLES
+               ========================================= */
+
+            @media (max-width: 1024px) {
+                .title-wrapper .title {
+                    max-width: 25rem;
+                }
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    height: 100dvh;
+                }
+
+                header {
+                    flex-wrap: wrap;
+                    gap: 0.5rem;
+                }
+
+                .title-wrapper .title {
+                    max-width: 30rem;
+                }
+
+                .main-content {
+                    padding-inline: 0.75rem;
+                }
+
+                .main-content .dropzone {
+                    font-size: 1.5rem;
+                }
+
+                .stats {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 1rem;
+                }
+
+                .stats .col {
+                    flex-wrap: wrap;
+                    gap: 0.75rem;
+                }
+
+                .stats .debug-container {
+                    align-items: stretch;
+                }
+            }
+
+            @media (max-width: 480px) {
+                header {
+                    padding: 0.5rem 0.75rem;
+                }
+
+                button {
+                    font-size: 0.8rem;
+                    padding: 6px 10px;
+                }
+
+                .title-wrapper .title {
+                    max-width: 20rem;
+                }
+
+                .main-content textarea {
+                    font-size: 1rem;
+                    padding: 0.75rem;
+                }
+
+                .dialog-content {
+                    padding: 1.5rem;
+                }
+
+                .stats {
+                    padding: 0 0.75rem 0.5rem;
+                }
+
+                .stats .col {
+                    width: 100%;
+                    justify-content: space-between;
+                }
+
+                .stats .col:last-child {
+                    display: flex;
+                    justify-content: flex-end;
+                }
+
+                .stats .col > span {
+                    border-left: none;
+                    padding-inline: 0;
+                }
+
+                .stats .col span + span {
+                    border-left: 1px solid #3a4452;
+                    padding-left: 0.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="title-wrapper">
+                <h1
+                    class="title"
+                    id="title"
+                    contenteditable="plaintext-only"
+                    role="textbox"
+                    aria-label="Note title"
+                    aria-multiline="false"
+                    title="Title"
+                    onkeydown="
+                        if (event.key == 'Enter') {
+                            window.getSelection().removeAllRanges();
+                            this.blur();
+                        }
+                    "
+                    onfocus="
+                        const range = document.createRange();
+                        range.selectNodeContents(this);
+                        const sel = window.getSelection();
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    "
+                    onblur="
+                        if (!this.textContent) {
+                            this.textContent = 'Untitled Note';
+                        }
+                        this.scrollLeft = 0;
+                    "
+                >
+                    Untitled Note
+                </h1>
+                <svg
+                    width="24px"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                    focusable="false"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M12 21C12 20.4477 12.4477 20 13 20H21C21.5523 20 22 20.4477 22 21C22 21.5523 21.5523 22 21 22H13C12.4477 22 12 21.5523 12 21Z"
+                        fill="#323232"
+                    />
+                    <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M20.7736 8.09994C22.3834 6.48381 22.315 4.36152 21.113 3.06183C20.5268 2.4281 19.6926 2.0233 18.7477 2.00098C17.7993 1.97858 16.8167 2.34127 15.91 3.09985C15.8868 3.11925 15.8645 3.13969 15.8432 3.16111L2.87446 16.1816C2.31443 16.7438 2 17.5051 2 18.2987V19.9922C2 21.0937 2.89197 22 4.00383 22H5.68265C6.48037 22 7.24524 21.6823 7.80819 21.1171L20.7736 8.09994ZM17.2071 5.79295C16.8166 5.40243 16.1834 5.40243 15.7929 5.79295C15.4024 6.18348 15.4024 6.81664 15.7929 7.20717L16.7929 8.20717C17.1834 8.59769 17.8166 8.59769 18.2071 8.20717C18.5976 7.81664 18.5976 7.18348 18.2071 6.79295L17.2071 5.79295Z"
+                        fill="#323232"
+                    />
+                </svg>
+            </div>
+            <nav aria-label="Note actions">
+                <ul class="options">
+                    <li class="option">
+                        <button
+                            type="button"
+                            aria-pressed="false"
+                            id="CopyLinkBtn"
+                            title="Copy link to clipboard"
+                            data-text="Copy Link"
+                            onclick="copyLink()"
+                        >
+                            <svg
+                                width="20px"
+                                height="20px"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                aria-hidden="true"
+                                focusable="false"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <g id="Interface / Link">
+                                    <path
+                                        id="Vector"
+                                        d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    />
+                                </g>
+                            </svg>
+                            <span>Copy Link</span>
+                        </button>
+                    </li>
+                    <li class="option">
+                        <button
+                            type="button"
+                            aria-pressed="false"
+                            id="OpenBtn"
+                            title="Load an existing note"
+                            onclick="noteInput.click()"
+                        >
+                            <svg
+                                height="20px"
+                                width="20px"
+                                version="1.1"
+                                id="_x32_"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                viewBox="0 0 512 512"
+                                xml:space="preserve"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <g>
+                                    <path
+                                        fill="currentColor"
+                                        d="M503.283,233.406c-8.198-11.548-21.106-18.678-35.108-19.704v-44.571c0.007-12.334-5.052-23.663-13.14-31.724   c-8.068-8.088-19.39-13.14-31.724-13.134H220.167c-2.495,0-4.916-0.951-6.755-2.681l0.013,0.021L177.73,88.139   c-8.321-7.794-19.287-12.136-30.684-12.136H88.698c-12.334-0.007-23.663,5.053-31.724,13.141   c-8.088,8.06-13.147,19.39-13.14,31.724v92.834c-14.002,1.026-26.911,8.156-35.109,19.711C2.981,241.509,0,251.094,0,260.768   c0,5.244,0.875,10.53,2.66,15.616l42.15,120.524c0.247,0.69,0.499,1.299,0.821,1.956c1.935,3.917,3.74,7.766,5.77,11.609   c3.07,5.695,6.584,11.78,12.943,17.14c3.158,2.632,7.035,4.888,11.253,6.317c4.225,1.443,8.676,2.072,13.1,2.066H423.31   c7.302,0.04,14.18-2.352,19.349-5.71c7.849-5.086,12.491-11.568,16.032-17.202c3.48-5.647,5.894-10.905,7.412-13.688   c0.486-0.916,0.746-1.511,1.087-2.488l42.157-120.531c1.778-5.08,2.653-10.365,2.653-15.609   C512,251.094,509.026,241.509,503.283,233.406z M433.168,213.497H78.838v-92.628c0.007-2.776,1.074-5.128,2.885-6.974   c1.846-1.812,4.198-2.878,6.974-2.885h58.348c2.509,0,4.908,0.951,6.748,2.667l35.69,33.468l0.013,0.02   c8.3,7.76,19.26,12.115,30.671,12.115H423.31c2.776,0.006,5.134,1.074,6.974,2.885c1.812,1.839,2.879,4.191,2.885,6.967V213.497z"
+                                    />
+                                </g>
+                            </svg>
+                            <span>Open</span>
+                        </button>
+                        <input
+                            type="file"
+                            id="noteInput"
+                            accept=".txt"
+                            hidden
+                        />
+                    </li>
+                    <li class="option">
+                        <button
+                            type="button"
+                            aria-pressed="false"
+                            id="SaveBtn"
+                            title="Download note to device"
+                            onclick="saveFile()"
+                        >
+                            <svg
+                                width="20px"
+                                height="20px"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                aria-hidden="true"
+                                focusable="false"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M12.5535 16.5061C12.4114 16.6615 12.2106 16.75 12 16.75C11.7894 16.75 11.5886 16.6615 11.4465 16.5061L7.44648 12.1311C7.16698 11.8254 7.18822 11.351 7.49392 11.0715C7.79963 10.792 8.27402 10.8132 8.55352 11.1189L11.25 14.0682V3C11.25 2.58579 11.5858 2.25 12 2.25C12.4142 2.25 12.75 2.58579 12.75 3V14.0682L15.4465 11.1189C15.726 10.8132 16.2004 10.792 16.5061 11.0715C16.8118 11.351 16.833 11.8254 16.5535 12.1311L12.5535 16.5061Z"
+                                    fill="currentColor"
+                                />
+                                <path
+                                    d="M3.75 15C3.75 14.5858 3.41422 14.25 3 14.25C2.58579 14.25 2.25 14.5858 2.25 15V15.0549C2.24998 16.4225 2.24996 17.5248 2.36652 18.3918C2.48754 19.2919 2.74643 20.0497 3.34835 20.6516C3.95027 21.2536 4.70814 21.5125 5.60825 21.6335C6.47522 21.75 7.57754 21.75 8.94513 21.75H15.0549C16.4225 21.75 17.5248 21.75 18.3918 21.6335C19.2919 21.5125 20.0497 21.2536 20.6517 20.6516C21.2536 20.0497 21.5125 19.2919 21.6335 18.3918C21.75 17.5248 21.75 16.4225 21.75 15.0549V15C21.75 14.5858 21.4142 14.25 21 14.25C20.5858 14.25 20.25 14.5858 20.25 15C20.25 16.4354 20.2484 17.4365 20.1469 18.1919C20.0482 18.9257 19.8678 19.3142 19.591 19.591C19.3142 19.8678 18.9257 20.0482 18.1919 20.1469C17.4365 20.2484 16.4354 20.25 15 20.25H9C7.56459 20.25 6.56347 20.2484 5.80812 20.1469C5.07435 20.0482 4.68577 19.8678 4.40901 19.591C4.13225 19.3142 3.9518 18.9257 3.85315 18.1919C3.75159 17.4365 3.75 16.4354 3.75 15Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                            <span> Save </span>
+                        </button>
+                    </li>
+                    <li class="option">
+                        <button
+                            type="button"
+                            aria-pressed="false"
+                            id="ClearBtn"
+                            title="Clear note fields"
+                            onclick="showConfirmationDialog()"
+                        >
+                            <svg
+                                width="20px"
+                                height="20px"
+                                viewBox="0 0 76 76"
+                                style="scale: 1.7"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                version="1.1"
+                                baseProfile="full"
+                                enable-background="new 0 0 76.00 76.00"
+                                xml:space="preserve"
+                                aria-hidden="true"
+                                focusable="false"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    fill-opacity="1"
+                                    stroke-width="0.2"
+                                    stroke-linejoin="round"
+                                    d="M 28.4718,42.9497L 33.4216,38L 28.4718,33.0502L 31.0502,30.4718L 36,35.4216L 40.9498,30.4718L 43.5282,33.0502L 38.5784,38L 43.5282,42.9497L 40.9498,45.5282L 36,40.5784L 31.0503,45.5282L 28.4718,42.9497 Z M 57.9853,41.5355L 49.0354,50.4854C 47.9317,51.589 47,52 45,52L 24,52C 21.2386,52 19,49.7614 19,47L 19,29C 19,26.2386 21.2386,24 24,24L 45,24C 47,24 47.9317,24.4113 49.0354,25.5149L 57.9853,34.4645C 59.9379,36.4171 59.9379,39.5829 57.9853,41.5355 Z M 45,49C 46,49 46.3952,48.8828 46.914,48.3641L 55.8639,39.4142C 56.645,38.6332 56.645,37.3669 55.8639,36.5858L 46.914,27.6362C 46.3952,27.1175 46,27 45,27.0001L 24,27.0001C 22.8954,27.0001 22,27.8955 22,29.0001L 22,47.0001C 22,48.1046 22.8954,49.0001 24,49.0001L 45,49 Z "
+                                />
+                            </svg>
+                            <span>Clear</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+        <main class="main-content">
+            <dialog
+                id="clearDialog"
+                aria-labelledby="clearDialogTitle"
+                aria-describedby="clearDialogDesc"
+            >
+                <form method="dialog" class="dialog-content">
+                    <h2>Are you sure?</h2>
+                    <p id="clearDialogDesc">
+                        You're about to clear your note.<br />You can't undo
+                        this..
+                    </p>
+
+                    <div class="dialog-actions">
+                        <button value="cancel">Cancel</button>
+                        <button value="confirm" onclick="clearNote()">
+                            Confirm
+                        </button>
+                    </div>
+                </form>
+            </dialog>
+            <div
+                id="dropzone"
+                class="dropzone hidden"
+                role="region"
+                aria-label="Note dropzone"
+            >
+                <svg
+                    width="150px"
+                    height="150px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    aria-hidden="true"
+                    focusable="false"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        fill-rule="evenodd"
+                        clip-rule="evenodd"
+                        d="M9.29289 1.29289C9.48043 1.10536 9.73478 1 10 1H18C19.6569 1 21 2.34315 21 4V20C21 21.6569 19.6569 23 18 23H6C4.34315 23 3 21.6569 3 20V8C3 7.73478 3.10536 7.48043 3.29289 7.29289L9.29289 1.29289ZM18 3H11V8C11 8.55228 10.5523 9 10 9H5V20C5 20.5523 5.44772 21 6 21H18C18.5523 21 19 20.5523 19 20V4C19 3.44772 18.5523 3 18 3ZM6.41421 7H9V4.41421L6.41421 7ZM7 13C7 12.4477 7.44772 12 8 12H16C16.5523 12 17 12.4477 17 13C17 13.5523 16.5523 14 16 14H8C7.44772 14 7 13.5523 7 13ZM7 17C7 16.4477 7.44772 16 8 16H16C16.5523 16 17 16.4477 17 17C17 17.5523 16.5523 18 16 18H8C7.44772 18 7 17.5523 7 17Z"
+                        fill="currentColor"
+                    />
+                </svg>
+                <span>Drop your note here</span>
+            </div>
+            <label for="textArea" class="sr-only">Note content</label>
+            <textarea id="textArea" autofocus></textarea>
+        </main>
+        <footer class="stats">
+            <div class="col">
+                <span>
+                    <span id="currentLn" aria-live="polite">Ln 1</span>
+                    ,
+                    <span id="currentCol" aria-live="polite">Col 1</span>
+                </span>
+                <span id="charCount" aria-live="polite"> 0 Characters </span>
+            </div>
+            <div class="col">
+                <span class="typing-dir" aria-label="Text direction">
+                    <svg
+                        id="ltrSVG"
+                        class=""
+                        fill="currentColor"
+                        width="20px"
+                        height="20px"
+                        viewBox="0 0 124 124"
+                        aria-hidden="true"
+                        focusable="false"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M 24.463249,20.775516 9.9959887,61.69517 l 10.1412663,0 2.482127,-7.446385 15.814702,0 2.411208,7.446385 10.212183,0 -14.538177,-40.919654 -12.056049,0 z m 30.707468,0.425507 0,40.494147 9.432086,0 0,-4.396913 c 1.293334,1.79162 3.249382,3.112163 4.82242,3.971403 1.57297,0.840961 3.415725,1.276525 5.46068,1.276525 3.617927,0 6.611031,-1.540533 8.935661,-4.53875 2.324533,-3.016482 3.474947,-6.895549 3.474978,-11.630542 -3.4e-5,-4.734959 -1.150447,-8.561391 -3.474978,-11.559622 -2.324628,-3.016468 -5.317731,-4.538716 -8.935661,-4.53875 -2.044958,3.4e-5 -3.88771,0.417313 -5.46068,1.276524 -1.573038,0.84099 -3.529086,2.179821 -4.82242,3.971404 l 0,-14.325426 -9.432086,0 z m 53.826713,9.077498 c -5.29583,3.4e-5 -9.492807,1.403149 -12.481553,4.255076 -2.98871,2.833701 -4.467833,6.779264 -4.467831,11.843296 0,5.064067 1.479126,9.062261 4.467831,11.914215 2.988741,2.833677 7.185723,4.255077 12.481553,4.255077 1.52057,0 2.9647,-0.203939 4.46783,-0.496427 1.52054,-0.274225 3.07058,-0.63887 4.53875,-1.205605 l 0,-8.084644 c -1.11859,0.895814 -2.35945,1.599584 -3.68773,2.05662 -1.31087,0.457046 -2.71605,0.709184 -4.18416,0.709179 -2.62171,7e-6 -4.6308,-0.820685 -6.09894,-2.411211 -1.4507,-1.608784 -2.19846,-3.86695 -2.19846,-6.737204 0,-2.870222 0.74777,-5.075744 2.19846,-6.666285 1.46814,-1.608772 3.47723,-2.411185 6.09894,-2.41121 1.38072,2.7e-5 2.69548,0.19952 3.9714,0.638261 1.29337,0.438788 2.62458,1.142558 3.90049,2.05662 l 0,-8.013726 c -1.48565,-0.566706 -3.03569,-1.00227 -4.53875,-1.276522 -1.48564,-0.292479 -2.92978,-0.425476 -4.46783,-0.42551 z m -78.506156,0.07092 5.389763,15.601945 -10.70861,0 5.318847,-15.601945 z m 40.91965,7.020875 c 2.009975,2.4e-5 3.490039,0.80465 4.53875,2.340293 1.066122,1.535692 1.63108,3.741219 1.631112,6.666285 -3.2e-5,2.925095 -0.564987,5.201543 -1.631112,6.737204 -1.048714,1.535677 -2.528775,2.269378 -4.53875,2.269376 -2.009971,5e-6 -4.164326,-0.733699 -5.247926,-2.269376 -1.066189,-1.553941 -1.560225,-3.830384 -1.560195,-6.737204 -3e-5,-2.906786 0.494006,-5.130593 1.560195,-6.666285 1.0836,-1.553931 3.237955,-2.340269 5.247926,-2.340293 z m 12.623393,31.274813 0,10.212183 -69.499581,0 0,15.885618 69.499581,0 0,12.481553 L 117.79126,87.934804 84.034317,68.645126 z"
+                        />
+                    </svg>
+                    <svg
+                        id="rtlSVG"
+                        class="hidden"
+                        fill="currentColor"
+                        width="20px"
+                        height="20px"
+                        viewBox="0 0 124 124"
+                        aria-hidden="true"
+                        focusable="false"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            d="M 24.463249,20.775516 9.9959887,61.69517 l 10.1412663,0 2.482127,-7.446385 15.814702,0 2.411208,7.446385 10.212183,0 -14.538177,-40.919654 z m 30.707468,0.425507 0,40.494147 9.432086,0 0,-4.396913 c 1.293334,1.79162 3.249382,3.112163 4.82242,3.971403 1.57297,0.840961 3.415725,1.276525 5.46068,1.276525 3.617927,0 6.611031,-1.540533 8.935661,-4.53875 2.324533,-3.016482 3.474947,-6.895549 3.474978,-11.630542 -3.4e-5,-4.734959 -1.150447,-8.561391 -3.474978,-11.559622 -2.324628,-3.016468 -5.317731,-4.538716 -8.935661,-4.53875 -2.044958,3.4e-5 -3.88771,0.417313 -5.46068,1.276524 -1.573038,0.84099 -3.529086,2.179821 -4.82242,3.971404 l 0,-14.325426 z m 53.826713,9.077498 c -5.29583,3.4e-5 -9.492807,1.403149 -12.481553,4.255076 -2.98871,2.833701 -4.467833,6.779264 -4.467831,11.843296 0,5.064067 1.479126,9.062261 4.467831,11.914215 2.988741,2.833677 7.185723,4.255077 12.481553,4.255077 1.52057,0 2.9647,-0.203939 4.46783,-0.496427 1.52054,-0.274225 3.07058,-0.63887 4.53875,-1.205605 l 0,-8.084644 c -1.11859,0.895814 -2.35945,1.599584 -3.68773,2.05662 -1.31087,0.457046 -2.71605,0.709184 -4.18416,0.709179 -2.62171,7e-6 -4.6308,-0.820685 -6.09894,-2.411211 -1.4507,-1.608784 -2.19846,-3.86695 -2.19846,-6.737204 0,-2.870222 0.74777,-5.075744 2.19846,-6.666285 1.46814,-1.608772 3.47723,-2.411185 6.09894,-2.41121 1.38072,2.7e-5 2.69548,0.19952 3.9714,0.638261 1.29337,0.438788 2.62458,1.142558 3.90049,2.05662 l 0,-8.013726 c -1.48565,-0.566706 -3.03569,-1.00227 -4.53875,-1.276522 -1.48564,-0.292479 -2.92978,-0.425476 -4.46783,-0.42551 z m -78.506156,0.07092 5.389763,15.601945 -10.70861,0 z m 40.91965,7.020875 c 2.009975,2.4e-5 3.490039,0.80465 4.53875,2.340293 1.066122,1.535692 1.63108,3.741219 1.631112,6.666285 -3.2e-5,2.925095 -0.564987,5.201543 -1.631112,6.737204 -1.048714,1.535677 -2.528775,2.269378 -4.53875,2.269376 -2.009971,5e-6 -4.164326,-0.733699 -5.247926,-2.269376 -1.066189,-1.553941 -1.560225,-3.830384 -1.560195,-6.737204 -3e-5,-2.906786 0.494006,-5.130593 1.560195,-6.666285 1.0836,-1.553931 3.237955,-2.340269 5.247926,-2.340293 z m -23.119245,69.854164 0,-10.21218 69.499581,0 0,-15.885618 -69.499581,0 0,-12.481553 -33.756943,19.289679 z"
+                        />
+                    </svg>
+                    <span>Plain Text</span>
+                </span>
+            </div>
+        </footer>
+
+        <script>
+            // DOM REFERENCES
+
+            const $ = (id) => document.getElementById(id);
+
+            const titleElement = $("title");
+            const textAreaElement = $("textArea");
+            const charCountElement = $("charCount");
+            const currentLnElement = $("currentLn");
+            const currentColElement = $("currentCol");
+            const clearDialogElement = $("clearDialog");
+            const noteInput = $("noteInput");
+            const dropZone = $("dropzone");
+
+            const copyLinkBtn = $("CopyLinkBtn");
+            const OpenBtn = $("OpenBtn");
+            const SaveBtn = $("SaveBtn");
+            const ClearBtn = $("ClearBtn");
+
+            const ltrSVGElement = $("ltrSVG");
+            const rtlSVGElement = $("rtlSVG");
+
+            // CONSTANTS
+
+            const NOTE_MAX_LIMIT = 1000000;
+            let currentLength = 0;
+
+            // INIT
+
+            document.addEventListener("DOMContentLoaded", () => {
+            restoreNoteData();
+            updatePageTitle();
+            updateCharCount();
+            });
+
+            window.addEventListener("hashchange", () => location.reload());
+
+            // DEBOUNCE
+
+            const debounce = (fn, delay = 300) => {
+            let t;
+            return (...args) => {
+                clearTimeout(t);
+                t = setTimeout(() => fn.apply(this, args), delay);
+            };
+            };
+
+            document.addEventListener(
+            "input",
+            debounce((e) => saveNoteToURL(e.target.value))
+            );
+
+            // PAGE TITLE
+
+            function updatePageTitle() { document.title = titleElement.textContent; }
+
+            titleElement.addEventListener("blur", updatePageTitle)
+
+            // LINE / COLUMN TRACKING
+
+            function updateCharCount() {
+            const total = textAreaElement.value.length;
+            const selected =
+                textAreaElement.selectionEnd - textAreaElement.selectionStart;
+
+            charCountElement.textContent =
+                selected > 0
+                ? `${selected} of ${total} Characters`
+                : `${total} Characters`;
+            }
+
+            ["input", "selectionchange"].forEach((evt) =>
+            document.addEventListener(evt, updateCharCount)
+            );
+
+            function updateCurrentLnCol() {
+            if (document.activeElement !== textAreaElement) return;
+
+            const pos = textAreaElement.selectionStart;
+            const lines = textAreaElement.value.slice(0, pos).split("\n");
+
+            currentLnElement.textContent = `Ln ${lines.length}`;
+            currentColElement.textContent = `Col ${lines.at(-1).length + 1}`;
+            }
+
+            ["input", "click", "keyup", "focus"].forEach((e) =>
+            textAreaElement.addEventListener(e, updateCurrentLnCol)
+            );
+
+            document.addEventListener("selectionchange", updateCurrentLnCol);
+
+            // TYPING DIRECTION
+
+            function setTypingDir(e) {
+            const el = e.target;
+            const text =
+                el === textAreaElement
+                ? el.value.trim()
+                : el.textContent.trim();
+
+            const isRTL = /[\u0600-\u06FF]/.test(text.charAt(0));
+
+            el.style.direction = text && isRTL ? "rtl" : "ltr";
+
+            ltrSVGElement.classList.toggle("hidden", text && isRTL);
+            rtlSVGElement.classList.toggle("hidden", !(text && isRTL));
+            }
+
+            textAreaElement.addEventListener("input", setTypingDir);
+            titleElement.addEventListener("input", setTypingDir);
+
+            // TITLE LIMIT HANDLING
+
+            titleElement.addEventListener("keydown", (e) => {
+            const allowed =
+                ["Backspace", "Delete", "Tab"].includes(e.key) ||
+                e.key.startsWith("Arrow") ||
+                e.ctrlKey;
+
+            if (!allowed && titleElement.textContent.length >= 60) {
+                e.preventDefault();
+            }
+            });
+
+            titleElement.addEventListener("paste", (e) => {
+            e.preventDefault();
+
+            const selection = window.getSelection();
+            const range = selection.getRangeAt(0);
+            const selectedText = selection.toString();
+            const current = titleElement.textContent;
+
+            const remaining = 60 - (current.length - selectedText.length);
+            if (remaining <= 0) return;
+
+            const pasted = e.clipboardData
+                .getData("text/plain")
+                .replace(/[\r\n]+/g, " ")
+                .slice(0, remaining);
+
+            range.deleteContents();
+            range.insertNode(document.createTextNode(pasted));
+            range.collapse(false);
+            });
+
+            // COPY LINK
+
+            const ORIGINAL_LINK_ICON = `
+            <path id="Vector" d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            `;
+
+            const SUCCESS_ICON = `
+            <polyline points="3.7 14.3 9.6 19 20.3 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+            `;
+
+            const ERROR_ICON = `
+            <path xmlns="http://www.w3.org/2000/svg" d="M6.96967 16.4697C6.67678 16.7626 6.67678 17.2374 6.96967 17.5303C7.26256 17.8232 7.73744 17.8232 8.03033 17.5303L6.96967 16.4697ZM13.0303 12.5303C13.3232 12.2374 13.3232 11.7626 13.0303 11.4697C12.7374 11.1768 12.2626 11.1768 11.9697 11.4697L13.0303 12.5303ZM11.9697 11.4697C11.6768 11.7626 11.6768 12.2374 11.9697 12.5303C12.2626 12.8232 12.7374 12.8232 13.0303 12.5303L11.9697 11.4697ZM18.0303 7.53033C18.3232 7.23744 18.3232 6.76256 18.0303 6.46967C17.7374 6.17678 17.2626 6.17678 16.9697 6.46967L18.0303 7.53033ZM13.0303 11.4697C12.7374 11.1768 12.2626 11.1768 11.9697 11.4697C11.6768 11.7626 11.6768 12.2374 11.9697 12.5303L13.0303 11.4697ZM16.9697 17.5303C17.2626 17.8232 17.7374 17.8232 18.0303 17.5303C18.3232 17.2374 18.3232 16.7626 18.0303 16.4697L16.9697 17.5303ZM11.9697 12.5303L16.9697 17.5303L18.0303 16.4697L13.0303 11.4697L11.9697 12.5303ZM13.0303 11.4697L8.03033 6.46967L6.96967 7.53033L11.9697 12.5303L13.0303 11.4697Z" fill="currentColor"/>
+            `;
+
+            function setCopyBtnState(text, icon, disabled = true) {
+            copyLinkBtn.disabled = disabled;
+            copyLinkBtn.querySelector("span").textContent = text;
+            copyLinkBtn.querySelector("svg").innerHTML = icon;
+            }
+
+            function resetCopyBtn() {
+            setCopyBtnState(copyLinkBtn.getAttribute("data-text"), ORIGINAL_LINK_ICON, false);
+            }
+
+            function copyLink() {
+            const url = window.location.href;
+            const secure = navigator.clipboard && window.isSecureContext;
+
+            const success = () => {
+                setCopyBtnState("Copied!", SUCCESS_ICON);
+                setTimeout(resetCopyBtn, 2000);
+            };
+
+            const fail = () => {
+                setCopyBtnState("Failed", ERROR_ICON);
+                setTimeout(resetCopyBtn, 2000);
+            };
+
+            if (secure) {
+                navigator.clipboard.writeText(url).then(success).catch(() => fallbackCopy(url, success, fail));
+            } else {
+                fallbackCopy(url, success, fail);
+            }
+            }
+
+            function fallbackCopy(text, onSuccess, onFail) {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.cssText = "position:fixed;opacity:0";
+            document.body.appendChild(ta);
+            ta.select();
+
+            try {
+                document.execCommand("copy");
+                onSuccess();
+            } catch {
+                onFail();
+            }
+
+            document.body.removeChild(ta);
+            }
+
+            // SAVE FILE
+
+            async function saveFile() {
+            const filename = `${titleElement.textContent}.txt`;
+            const text = textAreaElement.value;
+            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+
+            if ("showSaveFilePicker" in window) {
+                try {
+                const handle = await showSaveFilePicker({
+                    suggestedName: filename,
+                    types: [{ description: "Text Files", accept: { "text/plain": [".txt"] } }],
+                });
+
+                const writable = await handle.createWritable();
+                await writable.write(text);
+                await writable.close();
+                return;
+                } catch (err) {
+                if (err.name === "AbortError") return;
+                }
+            }
+
+            if (navigator.msSaveOrOpenBlob) return navigator.msSaveOrOpenBlob(blob, filename);
+
+            const url = URL.createObjectURL(blob);
+            Object.assign(document.createElement("a"), {
+                href: url,
+                download: filename,
+                style: "display:none",
+            }).click();
+
+            URL.revokeObjectURL(url);
+            }
+
+            // CLEAR
+
+            function showConfirmationDialog() {
+            clearDialogElement.showModal();
+            }
+
+            function clearNote() {
+            titleElement.textContent = "Untitled Note";
+            textAreaElement.value = "";
+            saveNoteToURL();
+            setTimeout(() => textAreaElement.focus());
+            }
+
+            // FILE INPUT & DRAG DROP
+
+            noteInput.addEventListener("change", () => {
+            if (noteInput.files.length) {
+                handleFile(noteInput.files[0]);
+                noteInput.value = "";
+            }
+            });
+
+            ["dragover", "drop"].forEach((e) =>
+            textAreaElement.addEventListener(e, (ev) => {
+                ev.preventDefault();
+                dropZone.classList.toggle("hidden", e === "drop");
+                if (e === "drop" && ev.dataTransfer.files.length)
+                handleFile(ev.dataTransfer.files[0]);
+            })
+            );
+
+            textAreaElement.addEventListener("dragleave", () =>
+            dropZone.classList.add("hidden")
+            );
+
+            async function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith(".txt"))
+                return alert("Please select a .txt file.");
+
+            const title = file.name.slice(0, -4).slice(0, 60);
+
+            try {
+                const text = file.text
+                ? await file.text()
+                : await new Promise((res, rej) => {
+                    const r = new FileReader();
+                    r.onload = (e) => res(e.target.result);
+                    r.onerror = rej;
+                    r.readAsText(file);
+                    });
+
+                titleElement.textContent = title;
+                textAreaElement.value = text;
+                updatePageTitle();
+                saveNoteToURL();
+            } catch {
+                alert("Failed to load note.");
+            }
+            }
+
+            // URL ENCODE / DECODE
+
+            async function encodeTextForURL(text) {
+            const stream = new Blob([new TextEncoder().encode(text)])
+                .stream()
+                .pipeThrough(new CompressionStream("gzip"));
+
+            const buffer = await new Response(stream).arrayBuffer();
+
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () =>
+                resolve(
+                    reader.result
+                    .split(",")[1]
+                    .replace(/\+/g, "-")
+                    .replace(/\//g, "_")
+                    .replace(/=+$/, "")
+                );
+                reader.readAsDataURL(new Blob([buffer]));
+            });
+            }
+
+            async function decodeTextFromURL(b64) {
+            try {
+                let base64 = b64.replace(/-/g, "+").replace(/_/g, "/");
+                while (base64.length % 4) base64 += "=";
+
+                const buffer = await fetch(
+                `data:application/octet-stream;base64,${base64}`
+                ).then((r) => r.arrayBuffer());
+
+                const text = await new Response(
+                new Blob([buffer]).stream().pipeThrough(new DecompressionStream("gzip"))
+                ).text();
+
+                return text;
+            } catch (err) {
+                console.error("URL is Broken OR Invalid:", err);
+                alert("URL is Broken OR Invalid\nMake sure it's untampered with.");
+            }
+            }
+
+            // SAVE TO URL
+
+            async function saveNoteToURL() {
+            const encoded = await encodeTextForURL(
+                JSON.stringify({
+                NoteTitle: titleElement.textContent,
+                NoteText: textAreaElement.value,
+                })
+            );
+
+            currentLength = encoded.length;
+
+            if (currentLength <= NOTE_MAX_LIMIT)
+                history.replaceState(null, null, `#${encoded}`);
+            }
+
+            textAreaElement.addEventListener("input", (e) => {
+            if (
+                currentLength >= NOTE_MAX_LIMIT &&
+                !["Backspace", "Delete"].includes(e.key)
+            ) {
+                e.preventDefault();
+            }
+            });
+
+            // RESTORE
+
+            async function readNoteData() {
+            const encoded = location.hash.substring(1);
+            if (!encoded) return;
+
+            const decoded = await decodeTextFromURL(encoded);
+            return decoded ? JSON.parse(decoded) : { NoteTitle: "", NoteText: "" };
+            }
+
+            async function restoreNoteData() {
+            const data = await readNoteData();
+            if (!data) return;
+
+            titleElement.textContent = data.NoteTitle.trim();
+            textAreaElement.value = data.NoteText.trim();
+            }
+
+            updateCurrentLnCol();
+
+        </script>
+    </body>
+</html>
